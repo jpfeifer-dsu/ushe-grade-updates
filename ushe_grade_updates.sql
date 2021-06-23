@@ -23,11 +23,16 @@ with cte_credits_earned as (
 
 
 select
---     dsc_pidm,
---     final_grade,
---     sfrstcr_grde_code,
---     s1.banner_term,
---     s1.dsc_crn,
+    dsc_pidm,
+    final_grade,
+    s1.sc_grade,
+    sfrstcr_grde_code,
+    s1.banner_term,
+    s1.dsc_crn,
+    c_program_type,
+    case
+       when sc_grade = dsc.f_get_final_grade(s1.dsc_pidm, s1.banner_term, s1.dsc_crn) then 'yes' else 'no'
+       end AS grade_match,
     --USHE QUERY
     sc_level,
     sc_inst,
@@ -46,7 +51,7 @@ from student_courses@dscir s1
 left join cte_credits_earned s2
           on s1.dsc_pidm = s2.sfrstcr_pidm and s1.banner_term = s2.sfrstcr_term_code and s1.dsc_crn = s2.sfrstcr_crn
 left join courses@dscir s3 on s3.dc_crn = s1.dsc_crn and s3.dsc_term_code = s1.dsc_term_code
-where s1.banner_term in ('201930', '201940', '202020')
+where s1.banner_term in ('202030', '202040', '202120')
   and s1.sc_extract = 'E'
   and case when sc_grade = dsc.f_get_final_grade(s1.dsc_pidm, s1.banner_term, s1.dsc_crn) then 'yes' else 'no' end = 'no'  -- Determines if there is a match or not
 and dsc.f_get_final_grade(s1.dsc_pidm, s1.banner_term, s1.dsc_crn) is not null;
